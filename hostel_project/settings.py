@@ -58,6 +58,10 @@ DATABASES = {
 AUTH_USER_MODEL = 'complaints.CustomUser'
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
