@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Login — HostelCare{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-16" style="background: radial-gradient(ellipse at 20% 50%, rgba(249,115,22,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.05) 0%, transparent 50%);">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5 mx-auto" style="background:linear-gradient(135deg,#f97316,#ea580c)">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+      </div>
+      <h1 class="font-display text-4xl font-800 text-white mb-2">Welcome back</h1>
+      <p class="text-slate-400">Sign in to HostelCare</p>
+    </div>
+    <div class="card p-8">
+      <div class="accent-line mb-8"></div>
+      <form method="POST" novalidate>
+        {% csrf_token %}
+        <div class="space-y-5">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Username</label>
+            <input type="text" name="username" class="input-field" placeholder="Enter your username" required autocomplete="username" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
+            <div class="relative">
+              <input type="password" name="password" id="loginPwd" class="input-field pr-12" placeholder="Enter your password" required autocomplete="current-password" />
+              <button type="button" onclick="togglePwd('loginPwd',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors p-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary w-full py-3 rounded-xl text-base mt-2">Sign In</button>
+        </div>
+      </form>
+      <p class="text-center text-slate-400 text-sm mt-6">Don't have an account? <a href="{% url 'register' %}" class="text-orange-400 hover:text-orange-300 font-medium transition-colors">Register here</a></p>
+    </div>
+    <p class="text-center text-xs text-slate-600 mt-6">Hostel Complaint Management System</p>
+  </div>
+</div>
+<script>
+function togglePwd(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+</script>
+{% endblock %}

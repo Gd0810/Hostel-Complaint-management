@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}HostelCare{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0f1729;
+      --navy-light: #1a2540;
+      --accent: #f97316;
+      --accent2: #fb923c;
+      --slate: #64748b;
+      --surface: #1e2d45;
+    }
+    * { font-family: 'DM Sans', sans-serif; }
+    h1,h2,h3,h4,.font-display { font-family: 'Syne', sans-serif; }
+    body { background: var(--navy); color: #e2e8f0; min-height: 100vh; }
+    .nav-glass {
+      background: rgba(15,23,41,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(249,115,22,0.15);
+    }
+    .card {
+      background: var(--navy-light);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      transition: all 0.2s;
+    }
+    .card:hover { border-color: rgba(249,115,22,0.25); transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white; border: none; cursor: pointer;
+      transition: all 0.2s; font-family: 'Syne', sans-serif; font-weight: 600;
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, #fb923c, #f97316); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(249,115,22,0.4); }
+    .badge-high { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .badge-medium { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+    .badge-low { background: rgba(234,179,8,0.15); color: #fbbf24; border: 1px solid rgba(234,179,8,0.3); }
+    .badge-pending { background: rgba(100,116,139,0.2); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
+    .badge-inprogress { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .badge-resolved { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .input-field {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #e2e8f0; border-radius: 10px; padding: 12px 16px; width: 100%;
+      transition: all 0.2s;
+    }
+    .input-field:focus { outline: none; border-color: #f97316; background: rgba(249,115,22,0.05); box-shadow: 0 0 0 3px rgba(249,115,22,0.1); }
+    .input-field::placeholder { color: #475569; }
+    select.input-field option { background: #1a2540; }
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast {
+      padding: 14px 20px; border-radius: 12px; font-weight: 500; font-size: 14px;
+      animation: slideIn 0.3s ease; min-width: 280px; display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .toast-success { background: #052e16; border: 1px solid #16a34a; color: #4ade80; }
+    .toast-error { background: #2d0a0a; border: 1px solid #dc2626; color: #f87171; }
+    .toast-info { background: #0c1a2e; border: 1px solid #3b82f6; color: #60a5fa; }
+    @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; transform: translateX(100px); } }
+    .stat-card { background: linear-gradient(135deg, var(--navy-light), var(--surface)); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; }
+    .table-row:hover { background: rgba(249,115,22,0.04); }
+    .glow-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 2s infinite; }
+    .glow-dot-orange { background: #f97316; box-shadow: 0 0 8px #f97316; }
+    .glow-dot-blue { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+    .glow-dot-green { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .page-enter { animation: pageEnter 0.4s ease; }
+    @keyframes pageEnter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .accent-line { height: 3px; background: linear-gradient(90deg, #f97316, transparent); border-radius: 2px; }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--navy); } ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <nav class="nav-glass sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <a href="{% if user.is_admin_user %}{% url 'admin_dashboard' %}{% else %}{% url 'student_dashboard' %}{% endif %}" class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#f97316,#ea580c)">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+        </div>
+        <span class="font-display font-800 text-xl text-white">Hostel<span style="color:#f97316">Care</span></span>
+      </a>
+      <div class="flex items-center gap-2 sm:gap-4">
+        {% if user.is_admin_user %}
+          <a href="{% url 'admin_dashboard' %}" class="text-sm text-slate-300 hover:text-orange-400 transition-colors px-3 py-2 rounded-lg hover:bg-white/5">Dashboard</a>
+        {% else %}
+          <a href="{% url 'student_dashboard' %}" class="text-sm text-slate-300 hover:text-orange-400 transition-colors px-3 py-2 rounded-lg hover:bg-white/5">My Complaints</a>
+          <a href="{% url 'submit_complaint' %}" class="btn-primary text-sm px-4 py-2 rounded-lg">+ Submit</a>
+        {% endif %}
+        <div class="flex items-center gap-3 pl-3 border-l border-white/10">
+          <div>
+            <div class="text-sm font-semibold text-white">{{ user.username }}</div>
+           <div class="text-xs" style="color:#f97316">{% if user.is_superuser %}Admin{% else %}{{ user.role|capfirst }}{% endif %}</div>
+          </div>
+          <a href="{% url 'logout' %}" class="text-slate-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-red-500/10" title="Logout">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  {% endif %}
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  {% if messages %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const messages = [
+        {% for msg in messages %}
+        { text: "{{ msg|escapejs }}", type: "{{ msg.tags }}" },
+        {% endfor %}
+      ];
+      messages.forEach((m, i) => {
+        setTimeout(() => showToast(m.text, m.type), i * 150);
+      });
+    });
+  </script>
+  {% endif %}
+
+  <main class="page-enter">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+  function showToast(text, type='info') {
+    const container = document.getElementById('toastContainer');
+    const icons = {
+      success: '<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>',
+      error: '<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>',
+      info: '<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+    };
+    const cls = type.includes('error') ? 'toast-error' : type.includes('success') ? 'toast-success' : 'toast-info';
+    const icon = type.includes('error') ? icons.error : type.includes('success') ? icons.success : icons.info;
+    const div = document.createElement('div');
+    div.className = `toast ${cls}`;
+    div.innerHTML = icon + `<span>${text}</span>`;
+    container.appendChild(div);
+    setTimeout(() => { div.style.animation = 'fadeOut 0.3s ease forwards'; setTimeout(() => div.remove(), 300); }, 4000);
+  }
+  </script>
+</body>
+</html>
